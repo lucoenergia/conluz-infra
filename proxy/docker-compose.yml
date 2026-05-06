@@ -1,0 +1,10 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+    env_file:
+      - .env
+    restart: unless-stopped

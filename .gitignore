@@ -1,0 +1,10 @@
+# Environment files — never commit secrets
+.env
+**/.env
+
+# OS/editor artifacts
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/

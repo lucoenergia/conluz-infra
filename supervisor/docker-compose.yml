@@ -1,0 +1,20 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:-changeme}
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL:-http://localhost:3000}
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      PROMETHEUS_URL: ${PROMETHEUS_URL}
+      LOKI_URL: ${LOKI_URL}
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - ./provisioning/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  grafana-data:

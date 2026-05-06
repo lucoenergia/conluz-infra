@@ -1,0 +1,65 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    env_file:
+      - .env
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        envsubst < /etc/alertmanager/alertmanager.yml.template > /tmp/alertmanager.yml
+        exec /bin/alertmanager --config.file=/tmp/alertmanager.yml --storage.path=/alertmanager
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml.template:ro
+      - alertmanager-data:/alertmanager
+    env_file:
+      - .env
+    ports:
+      - "9093:9093"
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/host
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro,rslave
+    pid: host
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring-net
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+
+networks:
+  monitoring-net:
+    driver: bridge

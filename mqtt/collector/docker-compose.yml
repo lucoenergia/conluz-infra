@@ -1,0 +1,8 @@
+services:
+  telegraf:
+    image: telegraf:latest
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    env_file:
+      - .env
+    restart: unless-stopped
