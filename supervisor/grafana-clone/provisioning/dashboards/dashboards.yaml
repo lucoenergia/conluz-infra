@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: default
+    type: file
+    disableDeletion: false
+    # Set false so the imported dashboards stay reproducible from files.
+    # Set true only if you want to tweak them in the UI and re-export.
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards/json
+      foldersFromFilesStructure: false

@@ -1,0 +1,25 @@
+services:
+  grafana:
+    # Pin to the SAME version running on the Raspberry Pi.
+    # Check on the Pi with: docker exec <grafana> grafana-cli -v  (or the UI footer)
+    # A version mismatch can shift panel/JSON schema and break dashboards.
+    image: grafana/grafana:12.2.0
+    container_name: grafana-local-clone
+    ports:
+      - "3000:3000"
+    # Lets the container reach host-published services (e.g. InfluxDB on :8086)
+    # via host.docker.internal. The host-gateway mapping is required on Linux.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD:-admin}
+      # These are read by the provisioning files via ${VAR} interpolation:
+      #   INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_PASSWORD  (defined in .env)
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - grafana-local-data:/var/lib/grafana
+
+volumes:
+  grafana-local-data:

@@ -8,3 +8,7 @@
 *~
 .idea/
 .vscode/
+
+# Grafana dashboards and datasources
+supervisor/grafana-clone/provisioning/dashboards/json/*
+supervisor/grafana-clone/provisioning/datasources/datasources.yaml
