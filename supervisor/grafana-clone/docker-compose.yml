@@ -15,6 +15,10 @@ services:
       - .env
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD:-admin}
+      # Enable the Grafana image's built-in rendering service, which is used to render images of panels.
+      GF_RENDERING_SERVER_URL: ${GF_RENDERING_SERVER_URL:-http://localhost:8081/render}
+      GF_RENDERING_CALLBACK_URL: ${GF_RENDERING_CALLBACK_URL:-http://localhost:3000/}
+      GF_LOG_FILTERS=rendering: debug
       # These are read by the provisioning files via ${VAR} interpolation:
       #   INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_PASSWORD  (defined in .env)
     volumes:
